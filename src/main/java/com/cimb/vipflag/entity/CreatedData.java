@@ -18,6 +18,7 @@ public class CreatedData {
     @JoinColumn(name = "maker_id")
     private User user;
 
+
     public int getCifNumber() {
         return cifNumber;
     }
