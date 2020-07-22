@@ -12,10 +12,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
+    private String username;
     private String password;
     private String firstName;
     private String lastName;
-    private Byte active;
+    private Boolean active;
     private Date lastEntry;
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
@@ -28,11 +29,19 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<CreatedData> createdData;
+    private List<MakerCreate> makerCreate;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CheckerApproval> checkerApproval;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ApprovedData> approvedData;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CreatedData> createdData;
 
     public int getUserId() {
         return userId;
@@ -40,6 +49,14 @@ public class User {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -66,11 +83,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Byte getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(Byte active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -98,12 +115,20 @@ public class User {
         this.userRole = userRole;
     }
 
-    public List<CreatedData> getCreatedData() {
-        return createdData;
+    public List<MakerCreate> getMakerCreate() {
+        return makerCreate;
     }
 
-    public void setCreatedData(List<CreatedData> createdData) {
-        this.createdData = createdData;
+    public void setMakerCreate(List<MakerCreate> makerCreate) {
+        this.makerCreate = makerCreate;
+    }
+
+    public List<CheckerApproval> getCheckerApproval() {
+        return checkerApproval;
+    }
+
+    public void setCheckerApproval(List<CheckerApproval> checkerApproval) {
+        this.checkerApproval = checkerApproval;
     }
 
     public List<ApprovedData> getApprovedData() {
@@ -112,5 +137,13 @@ public class User {
 
     public void setApprovedData(List<ApprovedData> approvedData) {
         this.approvedData = approvedData;
+    }
+
+    public List<CreatedData> getCreatedData() {
+        return createdData;
+    }
+
+    public void setCreatedData(List<CreatedData> createdData) {
+        this.createdData = createdData;
     }
 }
