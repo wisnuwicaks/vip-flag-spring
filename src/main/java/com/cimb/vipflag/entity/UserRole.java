@@ -14,10 +14,6 @@ public class UserRole {
     private String roleName;
     private String roleDescription;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userRole", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<User> user;
-
     public int getId() {
         return id;
     }
@@ -42,11 +38,4 @@ public class UserRole {
         this.roleDescription = roleDescription;
     }
 
-    public List<User> getUser() {
-        return user;
-    }
-
-    public void setUser(List<User> user) {
-        this.user = user;
-    }
 }

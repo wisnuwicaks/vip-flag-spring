@@ -19,21 +19,12 @@ public class User {
     private Boolean active;
     private Date lastEntry;
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinColumn(name = "group_menu_id")
-    private UserMenu userMenu;
+
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "role_id")
     private UserRole userRole;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<MakerCreate> makerCreate;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CheckerApproval> checkerApproval;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -99,13 +90,7 @@ public class User {
         this.lastEntry = lastEntry;
     }
 
-    public UserMenu getUserMenu() {
-        return userMenu;
-    }
 
-    public void setUserMenu(UserMenu userMenu) {
-        this.userMenu = userMenu;
-    }
 
     public UserRole getUserRole() {
         return userRole;
@@ -115,21 +100,6 @@ public class User {
         this.userRole = userRole;
     }
 
-    public List<MakerCreate> getMakerCreate() {
-        return makerCreate;
-    }
-
-    public void setMakerCreate(List<MakerCreate> makerCreate) {
-        this.makerCreate = makerCreate;
-    }
-
-    public List<CheckerApproval> getCheckerApproval() {
-        return checkerApproval;
-    }
-
-    public void setCheckerApproval(List<CheckerApproval> checkerApproval) {
-        this.checkerApproval = checkerApproval;
-    }
 
     public List<ApprovedData> getApprovedData() {
         return approvedData;

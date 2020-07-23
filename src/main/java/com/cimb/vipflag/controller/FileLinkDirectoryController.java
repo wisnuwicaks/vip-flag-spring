@@ -2,7 +2,10 @@ package com.cimb.vipflag.controller;
 
 
 import com.cimb.vipflag.dao.FileLinkDirectoryRepo;
+import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.FileLinkDirectory;
+import com.cimb.vipflag.entity.User;
+import com.cimb.vipflag.entity.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 
 @RestController
@@ -42,18 +49,32 @@ public class FileLinkDirectoryController {
     @Autowired
     private FileLinkDirectoryRepo fileLinkDirectoryRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
+    @PostMapping("/uploadExcelFile/{makerId}/{checkerId}")
+    public FileLinkDirectory uploadFile(Model model, MultipartFile file,@PathVariable int makerId,@PathVariable int checkerId) throws IOException {
+        User findMaker = userRepo.findById(makerId).get();
+        User findChecker = userRepo.findById(checkerId).get();
 
 
-    @PostMapping("/uploadExcelFile")
-    public FileLinkDirectory uploadFile(Model model, MultipartFile file) throws IOException {
         InputStream in = file.getInputStream();
         LocalDateTime localDateTime = LocalDateTime.now();
-        FileLinkDirectory findLastFile = fileLinkDirectoryRepo.findLastFile();
+        Optional<FileLinkDirectory> findLastFile = fileLinkDirectoryRepo.findLastFile();
 
         LocalDate localDate = localDateTime.toLocalDate();
         LocalTime localTime = localDateTime.toLocalTime();
-        int sequenceNumber = findLastFile.getFileId()+1;
-        Date date = Date.valueOf(localDate);
+
+
+        System.out.println(findLastFile);
+        int sequenceNumber = 0;
+        if(findLastFile.toString()=="Optional.empty") {
+            System.out.println("kosong");
+            sequenceNumber = 1;
+        }else{
+            sequenceNumber = findLastFile.get().getFileId()+1;
+        }
+        System.out.println(sequenceNumber);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         System.out.println(LocalDate.now().format(formatter));
@@ -70,13 +91,16 @@ public class FileLinkDirectoryController {
         model.addAttribute("message", "File: " + newFileName
                 + " has been uploaded successfully!");
 
-        FileLinkDirectory newData = new FileLinkDirectory();
+
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/download/")
                 .path(newFileName).toUriString();
 
+        Date date = Date.valueOf(localDate);
+        FileLinkDirectory newData = new FileLinkDirectory();
         newData.setCreatedDate(date);
         newData.setLinkDirectory(fileDownloadUri);
-
+        newData.setUserMaker(findMaker);
+        newData.setUserChecker(findChecker);
         return fileLinkDirectoryRepo.save(newData);
     }
 
