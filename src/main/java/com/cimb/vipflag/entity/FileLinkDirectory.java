@@ -2,17 +2,20 @@ package com.cimb.vipflag.entity;
 
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity
-public class FileLinkDirectory {
+public class FileLinkDirectory  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int fileId;
 
+
+
     private String linkDirectory;
-    private Date dateCreated;
-    private Date dateApproved;
+    private Date createdDate;
+    private Date approvalDate;
 
     public int getFileId() {
         return fileId;
@@ -30,21 +33,19 @@ public class FileLinkDirectory {
         this.linkDirectory = linkDirectory;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
+    public Date getApprovalDate() {
+        return approvalDate;
     }
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
-    public Date getDateApproved() {
-        return dateApproved;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDateApproved(Date dateApproved) {
-        this.dateApproved = dateApproved;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
-
-
 }

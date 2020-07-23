@@ -7,10 +7,10 @@ import java.util.Date;
 public class CreatedData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cifNumber;
+    private int cfcifn;
 
-    private String vipIndicator;
-    private String subVipIndicator;
+    private String cfvipi;
+    private String cfvipc;
     private Date createdDate;
     private String statusUpload;
 
@@ -19,28 +19,28 @@ public class CreatedData {
     private User user;
 
 
-    public int getCifNumber() {
-        return cifNumber;
+    public int getCfcifn() {
+        return cfcifn;
     }
 
-    public void setCifNumber(int cifNumber) {
-        this.cifNumber = cifNumber;
+    public void setCfcifn(int cfcifn) {
+        this.cfcifn = cfcifn;
     }
 
-    public String getVipIndicator() {
-        return vipIndicator;
+    public String getCfvipi() {
+        return cfvipi;
     }
 
-    public void setVipIndicator(String vipIndicator) {
-        this.vipIndicator = vipIndicator;
+    public void setCfvipi(String cfvipi) {
+        this.cfvipi = cfvipi;
     }
 
-    public String getSubVipIndicator() {
-        return subVipIndicator;
+    public String getCfvipc() {
+        return cfvipc;
     }
 
-    public void setSubVipIndicator(String subVipIndicator) {
-        this.subVipIndicator = subVipIndicator;
+    public void setCfvipc(String cfvipc) {
+        this.cfvipc = cfvipc;
     }
 
     public Date getCreatedDate() {

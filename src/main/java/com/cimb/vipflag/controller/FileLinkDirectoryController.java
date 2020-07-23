@@ -25,7 +25,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 
 @RestController
 @RequestMapping("/files")
@@ -37,86 +42,45 @@ public class FileLinkDirectoryController {
     @Autowired
     private FileLinkDirectoryRepo fileLinkDirectoryRepo;
 
-    @PostMapping("/upload")
-    public FileLinkDirectory uploadFile (@RequestParam MultipartFile file){
-        Date date = new Date();
+
+
+    @PostMapping("/uploadExcelFile")
+    public FileLinkDirectory uploadFile(Model model, MultipartFile file) throws IOException {
+        InputStream in = file.getInputStream();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        FileLinkDirectory findLastFile = fileLinkDirectoryRepo.findLastFile();
+
+        LocalDate localDate = localDateTime.toLocalDate();
+        LocalTime localTime = localDateTime.toLocalTime();
+        int sequenceNumber = findLastFile.getFileId()+1;
+        Date date = Date.valueOf(localDate);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        System.out.println(LocalDate.now().format(formatter));
+        String newFileName = "INCIFVIP_"+LocalDate.now().format(formatter)+"_"+Integer.toString(sequenceNumber)+".xlsx";
+        String fileLocation = filePath.substring(0, filePath.length()) +newFileName;
+        FileOutputStream f = new FileOutputStream(fileLocation);
+
+        int ch = 0;
+        while ((ch = in.read()) != -1) {
+            f.write(ch);
+        }
+        f.flush();
+        f.close();
+        model.addAttribute("message", "File: " + newFileName
+                + " has been uploaded successfully!");
 
         FileLinkDirectory newData = new FileLinkDirectory();
-        if(!file.equals(null)){
-//            String fileExtension = file.getContentType().split("/")[1];
-            String fileExtension = file.getOriginalFilename();
-            System.out.println("ini ekstensi :"+fileExtension);
-            String newFileName = "DATA-" + date.getTime() + "." + "xlsx";
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/download/")
+                .path(newFileName).toUriString();
 
-            // Get file's original name || can generate our own
-            String fileName = StringUtils.cleanPath(newFileName);
-
-            // Create path to upload destination + new file name
-            Path path = Paths.get(StringUtils.cleanPath(filePath) + fileName);
-
-            try {
-
-                System.out.println("try");
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                System.out.println("masukk");
-                e.printStackTrace();
-            }
-
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/file_download/")
-                    .path(fileName).toUriString();
-
-            newData.setDateCreated(date);
-            newData.setLinkDirectory(fileDownloadUri);
-        }
+        newData.setCreatedDate(date);
+        newData.setLinkDirectory(fileDownloadUri);
 
         return fileLinkDirectoryRepo.save(newData);
     }
 
-
-    @PostMapping("/uploadExcelFile")
-    public String uploadFile(Model model, MultipartFile file) throws IOException {
-        InputStream in = file.getInputStream();
-//        File currDir = new File(".");
-//        String path = currDir.getAbsolutePath();
-        String fileLocation = filePath.substring(0, filePath.length()) +file.getOriginalFilename();
-        FileOutputStream f = new FileOutputStream(fileLocation);
-        System.out.println(f.toString());
-        int ch = 0;
-        while ((ch = in.read()) != -1) {
-
-            f.write(ch);
-
-        }
-        f.flush();
-        f.close();
-        model.addAttribute("message", "File: " + file.getOriginalFilename()
-                + " has been uploaded successfully!");
-        return fileLocation;
-    }
-//
-//
-//    @Resource(name = "excelPOIHelper")
-//    private ExcelPOIHelper excelPOIHelper;
-//
-//    @RequestMapping(method = RequestMethod.GET, value = "/readPOI")
-//    public String readPOI(Model model) throws IOException {
-//
-//        if (fileLocation != null) {
-//            if (fileLocation.endsWith(".xlsx") || fileLocation.endsWith(".xls")) {
-//                Map<Integer, List<MyCell>> data
-//                        = excelPOIHelper.readExcel(fileLocation);
-//                model.addAttribute("data", data);
-//            } else {
-//                model.addAttribute("message", "Not a valid excel file!");
-//            }
-//        } else {
-//            model.addAttribute("message", "File missing! Please upload an excel file.");
-//        }
-//        return "excel";
-//    }
-
-    @GetMapping("/file_download/{fileName:.+}")
+    @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Object> downloadFile(@PathVariable String fileName){
         Path path = Paths.get(filePath + fileName);
         Resource resource = null;
@@ -128,10 +92,13 @@ public class FileLinkDirectoryController {
         }
 
 
-
         return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+
+
+
+
 
 }
