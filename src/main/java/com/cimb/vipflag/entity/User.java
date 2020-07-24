@@ -16,21 +16,12 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
-    private Boolean active;
+
     private Date lastEntry;
-
-
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "role_id")
     private UserRole userRole;
-
-
-
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CifData> cifData;
 
     public int getUserId() {
         return userId;
@@ -72,14 +63,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     public Date getLastEntry() {
         return lastEntry;
     }
@@ -88,22 +71,11 @@ public class User {
         this.lastEntry = lastEntry;
     }
 
-
-
     public UserRole getUserRole() {
         return userRole;
     }
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
-    }
-
-
-    public List<CifData> getCifData() {
-        return cifData;
-    }
-
-    public void setCifData(List<CifData> cifData) {
-        this.cifData = cifData;
     }
 }

@@ -1,24 +1,21 @@
 package com.cimb.vipflag.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class CifData {
+public class CifDataUploaded {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cfcifn;
 
     private String cfvipi;
     private String cfvipc;
-    private Date createdDate;
-    private String statusUpload;
+    private  Date createdDate;
+    private  Date approvalDate;
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinColumn(name = "maker_id")
-    private User user;
-
-
+    private String approvalStatus;
+    
     public int getCfcifn() {
         return cfcifn;
     }
@@ -51,19 +48,19 @@ public class CifData {
         this.createdDate = createdDate;
     }
 
-    public String getStatusUpload() {
-        return statusUpload;
+    public Date getApprovalDate() {
+        return approvalDate;
     }
 
-    public void setStatusUpload(String statusUpload) {
-        this.statusUpload = statusUpload;
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
-    public User getUser() {
-        return user;
+    public String getApprovalStatus() {
+        return approvalStatus;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus;
     }
 }

@@ -2,7 +2,8 @@ package com.cimb.vipflag.entity;
 
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Entity
@@ -13,8 +14,10 @@ public class FileLinkDirectory  {
 
     private String linkDirectory;
     private String fileName;
-    private Date createdDate;
-    private Date approvalDate;
+    private String createdBy;
+    private String approvedBy;
+    private LocalDateTime createdDate;
+    private LocalDateTime approvalDate;
     private String approvalStatus;
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
@@ -41,20 +44,36 @@ public class FileLinkDirectory  {
         this.linkDirectory = linkDirectory;
     }
 
-    public Date getCreatedDate() {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getApprovalDate() {
+    public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(Date approvalDate) {
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public String getApprovalStatus() {
+        return approvalStatus;
+    }
+
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus;
     }
 
     public User getUserMaker() {
@@ -73,19 +92,19 @@ public class FileLinkDirectory  {
         this.userChecker = userChecker;
     }
 
-    public String getApprovalStatus() {
-        return approvalStatus;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setApprovalStatus(String approvalStatus) {
-        this.approvalStatus = approvalStatus;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getApprovedBy() {
+        return approvedBy;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
     }
 }

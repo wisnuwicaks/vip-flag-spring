@@ -31,7 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
+import java.text.ParseException;
+import java.time.ZoneId;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -87,19 +90,21 @@ public class FileLinkDirectoryController {
     }
 
 
-    @PostMapping("/approve/{fileId}")
-    public FileLinkDirectory setApproveFile(@PathVariable int fileId){
+    @PostMapping("/approve/{fileId}/{checkerId}")
+    public FileLinkDirectory setApproveFile(@PathVariable int fileId,@PathVariable int checkerId){
 
+        User findChecker = userRepo.findById(checkerId).get();
         LocalDateTime localDateTime = LocalDateTime.now();
 
         LocalDate localDate = localDateTime.toLocalDate();
         LocalTime localTime = localDateTime.toLocalTime();
-        Date date = Date.valueOf(localDate);
+        java.sql.Date date = java.sql.Date.valueOf(localDate);
 
 
         FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
         findFile.setApprovalStatus("Approved");
-        findFile.setApprovalDate(date);
+        findFile.setApprovedBy(findChecker.getUsername());
+        findFile.setApprovalDate(localDateTime);
         return fileLinkDirectoryRepo.save(findFile);
     }
 
@@ -110,7 +115,8 @@ public class FileLinkDirectoryController {
 
         LocalDate localDate = localDateTime.toLocalDate();
         LocalTime localTime = localDateTime.toLocalTime();
-        Date date = Date.valueOf(localDate);
+        java.sql.Date date = java.sql.Date.valueOf(localDate);
+
 
 
         FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
@@ -127,10 +133,10 @@ public class FileLinkDirectoryController {
         InputStream in = file.getInputStream();
         Optional<FileLinkDirectory> findLastFile = fileLinkDirectoryRepo.findLastFile();
 
-        LocalDateTime localDateTime = LocalDateTime.now();
+//        LocalDate localDate = localDateTime.toLocalDate();
+//        LocalTime localTime = localDateTime.toLocalTime();
 
-        LocalDate localDate = localDateTime.toLocalDate();
-        LocalTime localTime = localDateTime.toLocalTime();
+
 
 
         System.out.println(findLastFile);
@@ -158,14 +164,22 @@ public class FileLinkDirectoryController {
         model.addAttribute("message", "File: " + newFileName
                 + " has been uploaded successfully!");
 
-
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/download/")
                 .path(newFileName).toUriString();
 
-        Date date = Date.valueOf(localDate);
+
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDate localDate = localDateTime.toLocalDate();
+        LocalTime localTime = localDateTime.toLocalTime();
+        java.sql.Date date = java.sql.Date.valueOf(localDate);
+
+        Date mydate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
         FileLinkDirectory newData = new FileLinkDirectory();
-        newData.setFileName(newFileName.substring(0,newFileName.indexOf(".")));
-        newData.setCreatedDate(date);
+        newData.setFileName(file.getOriginalFilename());
+        newData.setCreatedBy(findMaker.getUsername());
+        newData.setCreatedDate(localDateTime);
         newData.setLinkDirectory(fileDownloadUri);
         newData.setUserMaker(findMaker);
         newData.setUserChecker(findChecker);

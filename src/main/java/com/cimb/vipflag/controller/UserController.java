@@ -1,6 +1,6 @@
 package com.cimb.vipflag.controller;
 
-import com.cimb.vipflag.dao.CreatedRepo;
+import com.cimb.vipflag.dao.CifDataRepo;
 import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.dao.UserRoleRepo;
 import com.cimb.vipflag.entity.User;
@@ -19,7 +19,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private CreatedRepo createdRepo;
+    private CifDataRepo cifDataRepo;
 
     @Autowired
     private UserRepo userRepo;
@@ -59,12 +59,10 @@ public class UserController {
         return userRepo.save(findUser);
     }
 
-    @PostMapping("/{userId}/role/{roleName}")
-    public User removeUserRole (@PathVariable int userId,@PathVariable String roleName){
-        UserRole findRole = userRoleRepo.findUserRoleByRoleName(roleName);
-        User findUser = userRepo.findById(userId).get();
+    @PostMapping("/remove/{userId}")
+    public void removeUserRole (@PathVariable int userId){
 
-        return userRepo.save(findUser);
+        userRepo.deleteById(userId);
     }
 
     @GetMapping("/all_users")
