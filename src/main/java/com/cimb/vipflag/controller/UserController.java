@@ -1,6 +1,6 @@
 package com.cimb.vipflag.controller;
 
-import com.cimb.vipflag.dao.CifDataRepo;
+import com.cimb.vipflag.dao.CifDataUploadedRepo;
 import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.dao.UserRoleRepo;
 import com.cimb.vipflag.entity.User;
@@ -19,7 +19,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private CifDataRepo cifDataRepo;
+    private CifDataUploadedRepo cifDataUploadedRepo;
 
     @Autowired
     private UserRepo userRepo;

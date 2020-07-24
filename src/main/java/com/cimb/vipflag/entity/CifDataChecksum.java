@@ -1,6 +1,7 @@
 package com.cimb.vipflag.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -10,8 +11,8 @@ public class CifDataChecksum {
 
     private String cfvipi;
     private String cfvipc;
-    private  Date createdDate;
-    private  Date approvalDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime approvalDate;
     private String approvalStatus;
 
     public int getCfcifn() {
@@ -38,19 +39,19 @@ public class CifDataChecksum {
         this.cfvipc = cfvipc;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getApprovalDate() {
+    public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(Date approvalDate) {
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
@@ -60,5 +61,14 @@ public class CifDataChecksum {
 
     public void setApprovalStatus(String approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    @Override
+    public String toString() {
+        return  "cfcifn : " +cfcifn+
+                "cfvipi : " +cfvipi+
+                "cfvipc : " +cfvipc+
+                "approvalStatus : " +approvalStatus;
+
     }
 }
