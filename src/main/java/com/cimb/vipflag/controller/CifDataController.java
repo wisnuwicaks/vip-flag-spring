@@ -29,16 +29,12 @@ public class CifDataController {
     @PostMapping("/file")
     public void generateTextFile (@RequestBody FileLinkDirectory approvedData) throws IOException {
 //        FileInputStream fis = new FileInputStream(approvedData.getLinkDirectory());
-
+        System.out.println("ini adlah file id");
+        System.out.println(approvedData.getFileId());
         LocalDateTime localDateTime = LocalDateTime.now();
 
-//        LocalDate localDate = localDateTime.toLocalDate();
-//        LocalTime localTime = localDateTime.toLocalTime();
-
-
-
         String localDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String localTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String localTime = localDateTime.format(DateTimeFormatter.ofPattern("hhMMss"));
 
         StringBuilder sb = new StringBuilder();
 
@@ -74,21 +70,24 @@ public class CifDataController {
                 switch (cell.getCellType()) {
                     case STRING:
                         System.out.print(cell.getStringCellValue() + "\t");
-                        if(cell.getColumnIndex()+1== lastCol){
+                        if(cell.getColumnIndex()==0){
                             sb.append("01"+"|"+cell.getStringCellValue());
-                        }else {
-                            sb.append("01"+"|"+cell.getStringCellValue() + "|");
-                            System.out.println("masuk else");
+                        }else if(cell.getColumnIndex()+1== lastCol){
+                            sb.append(cell.getStringCellValue());
+
+                        }else{
+                            sb.append("|"+cell.getStringCellValue() + "|");
                         }
                         break;
                     case NUMERIC:
                         System.out.print((int) cell.getNumericCellValue() + "\t");
-                        if(cell.getColumnIndex()+1== lastCol){
+                        if(cell.getColumnIndex()==0){
                             sb.append("01"+"|"+(int)cell.getNumericCellValue());
-                        }else{
-                            sb.append("01"+"|"+(int)cell.getNumericCellValue()+ "|");
-                            System.out.println("masuk else");
+                        }else if(cell.getColumnIndex()+1== lastCol){
+                            sb.append((int)cell.getNumericCellValue());
 
+                        }else{
+                            sb.append("|"+(int)cell.getNumericCellValue() + "|");
                         }
                         break;
 //                    case BOOLEAN:
@@ -107,7 +106,7 @@ public class CifDataController {
             System.out.println("");
             sb.append("\n");
         }
-        sb.append(99+"|"+ 3+"|"+0+"\n");
+        sb.append(99+"|"+ 3+"|"+0+"+"+"\n");
 
         Path path = Paths.get(filePath +"INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt");
         Files.write(path, Arrays.asList(sb.toString()));

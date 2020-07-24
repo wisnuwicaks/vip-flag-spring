@@ -76,7 +76,10 @@ public class FileLinkDirectoryController {
         return fileLinkDirectoryRepo.findFileByMakerStatus(makerId,status);
     }
 
-
+    @GetMapping("/need_approve/{checkerId}")
+    public Iterable<FileLinkDirectory> getFileToApproveByChecker (@PathVariable int checkerId){
+        return fileLinkDirectoryRepo.findFileChecker();
+    }
 
     @GetMapping("/checker/{checkerId}/{status}")
     public Iterable<FileLinkDirectory> getFileByCheckerStatus (@PathVariable int checkerId,@PathVariable String status){
@@ -124,10 +127,9 @@ public class FileLinkDirectoryController {
         return fileLinkDirectoryRepo.save(findFile);
     }
 
-    @PostMapping("/uploadExcelFile/{makerId}/{checkerId}")
-    public FileLinkDirectory uploadFile(Model model, MultipartFile file,@PathVariable int makerId,@PathVariable int checkerId) throws IOException {
+    @PostMapping("/uploadExcelFile/{makerId}")
+    public FileLinkDirectory uploadFile(Model model, MultipartFile file,@PathVariable int makerId) throws IOException {
         User findMaker = userRepo.findById(makerId).get();
-        User findChecker = userRepo.findById(checkerId).get();
 
         InputStream in = file.getInputStream();
         Optional<FileLinkDirectory> findLastFile = fileLinkDirectoryRepo.findLastFile();
@@ -142,7 +144,7 @@ public class FileLinkDirectoryController {
         int sequenceNumber = 0;
         if(findLastFile.toString()=="Optional.empty") {
             System.out.println("kosong");
-            sequenceNumber = 1;
+            sequenceNumber = 2000;
         }else{
             sequenceNumber = findLastFile.get().getFileId()+1;
         }
@@ -176,12 +178,13 @@ public class FileLinkDirectoryController {
         Date mydate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         FileLinkDirectory newData = new FileLinkDirectory();
+        newData.setFileId(sequenceNumber);
         newData.setFileName(file.getOriginalFilename());
         newData.setCreatedBy(findMaker.getUsername());
         newData.setCreatedDate(localDateTime);
         newData.setLinkDirectory(fileDownloadUri);
         newData.setUserMaker(findMaker);
-        newData.setUserChecker(findChecker);
+
         return fileLinkDirectoryRepo.save(newData);
     }
 

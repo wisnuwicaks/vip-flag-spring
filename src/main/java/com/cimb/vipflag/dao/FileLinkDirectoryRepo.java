@@ -1,6 +1,7 @@
 package com.cimb.vipflag.dao;
 
 import com.cimb.vipflag.entity.FileLinkDirectory;
+import com.cimb.vipflag.entity.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,4 +25,14 @@ public interface FileLinkDirectoryRepo extends JpaRepository<FileLinkDirectory,I
 
     @Query(value = "SELECT * FROM file_link_directory where checker_id=?1 and approval_status=?2 or approval_status=?3 ",nativeQuery = true)
     public Iterable<FileLinkDirectory> findFileByCheckerStatus2 (int makerId,String status1, String status2);
+
+    @Query(value = "SELECT file_id,created_by,approved_by,\n" +
+            "created_date,approval_date,\n" +
+            "fl.maker_id,fl.checker_id,\n" +
+            "file_name,link_directory \n" +
+            "FROM file_link_directory fl \n" +
+            "join user_group ug on fl.maker_id=ug.maker_id \n"
+           , nativeQuery = true)
+    public Iterable<FileLinkDirectory> findFileChecker();
+
 }
