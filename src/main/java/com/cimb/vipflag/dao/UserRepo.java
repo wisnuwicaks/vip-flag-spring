@@ -13,7 +13,8 @@ public interface UserRepo extends JpaRepository<User,Integer> {
     public User findUserLogin(String username, String password);
 
     @Query(value = "SELECT * FROM user WHERE username= ?1", nativeQuery = true)
-    public Iterable<User> findAllByUsername(String username);
+    public User findByUsername(String username);
+
 
 
 

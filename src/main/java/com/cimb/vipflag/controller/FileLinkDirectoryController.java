@@ -52,15 +52,82 @@ public class FileLinkDirectoryController {
     @Autowired
     private UserRepo userRepo;
 
+
+    @GetMapping("/all")
+    public Iterable<FileLinkDirectory> getAllFileUploaded (){
+        return fileLinkDirectoryRepo.findAll();
+    }
+
+
+    @GetMapping("/checker/{checkerId}")
+    public Iterable<FileLinkDirectory> getFileByChecker (@PathVariable int checkerId){
+        return fileLinkDirectoryRepo.findFileByCheckerId(checkerId);
+    }
+
+    @GetMapping("/maker/{makerId}")
+    public Iterable<FileLinkDirectory> getFileByMaker (@PathVariable int makerId){
+        return fileLinkDirectoryRepo.findFileByMakerId(makerId);
+    }
+
+    @GetMapping("/maker/{makerId}/{status}")
+    public Iterable<FileLinkDirectory> getFileByMakerStatus (@PathVariable int makerId,@PathVariable String status){
+        return fileLinkDirectoryRepo.findFileByMakerStatus(makerId,status);
+    }
+
+
+
+    @GetMapping("/checker/{checkerId}/{status}")
+    public Iterable<FileLinkDirectory> getFileByCheckerStatus (@PathVariable int checkerId,@PathVariable String status){
+        return fileLinkDirectoryRepo.findFileByCheckerStatus(checkerId,status);
+    }
+
+    @GetMapping("/checker/{checkerId}/{status1}/{status2}")
+    public Iterable<FileLinkDirectory> getFileByCheckerStatus2 (@PathVariable int checkerId,@PathVariable String status1,@PathVariable String status2){
+        return fileLinkDirectoryRepo.findFileByCheckerStatus2(checkerId,status1,status2);
+    }
+
+
+    @PostMapping("/approve/{fileId}")
+    public FileLinkDirectory setApproveFile(@PathVariable int fileId){
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        LocalDate localDate = localDateTime.toLocalDate();
+        LocalTime localTime = localDateTime.toLocalTime();
+        Date date = Date.valueOf(localDate);
+
+
+        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
+        findFile.setApprovalStatus("Approved");
+        findFile.setApprovalDate(date);
+        return fileLinkDirectoryRepo.save(findFile);
+    }
+
+    @PostMapping("/reject/{fileId}")
+    public FileLinkDirectory setRejectFile(@PathVariable int fileId){
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        LocalDate localDate = localDateTime.toLocalDate();
+        LocalTime localTime = localDateTime.toLocalTime();
+        Date date = Date.valueOf(localDate);
+
+
+        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
+        findFile.setApprovalStatus("Rejected");
+        findFile.setApprovalDate(null);
+        return fileLinkDirectoryRepo.save(findFile);
+    }
+
     @PostMapping("/uploadExcelFile/{makerId}/{checkerId}")
     public FileLinkDirectory uploadFile(Model model, MultipartFile file,@PathVariable int makerId,@PathVariable int checkerId) throws IOException {
         User findMaker = userRepo.findById(makerId).get();
         User findChecker = userRepo.findById(checkerId).get();
 
-
         InputStream in = file.getInputStream();
-        LocalDateTime localDateTime = LocalDateTime.now();
         Optional<FileLinkDirectory> findLastFile = fileLinkDirectoryRepo.findLastFile();
+
+        LocalDateTime localDateTime = LocalDateTime.now();
 
         LocalDate localDate = localDateTime.toLocalDate();
         LocalTime localTime = localDateTime.toLocalTime();
@@ -97,6 +164,7 @@ public class FileLinkDirectoryController {
 
         Date date = Date.valueOf(localDate);
         FileLinkDirectory newData = new FileLinkDirectory();
+        newData.setFileName(newFileName.substring(0,newFileName.indexOf(".")));
         newData.setCreatedDate(date);
         newData.setLinkDirectory(fileDownloadUri);
         newData.setUserMaker(findMaker);

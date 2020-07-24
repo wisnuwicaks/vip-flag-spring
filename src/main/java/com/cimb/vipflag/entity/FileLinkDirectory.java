@@ -12,9 +12,10 @@ public class FileLinkDirectory  {
     private int fileId;
 
     private String linkDirectory;
+    private String fileName;
     private Date createdDate;
     private Date approvalDate;
-    private Date approvalStatus;
+    private String approvalStatus;
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "maker_id")
@@ -72,11 +73,19 @@ public class FileLinkDirectory  {
         this.userChecker = userChecker;
     }
 
-    public Date getApprovalStatus() {
+    public String getApprovalStatus() {
         return approvalStatus;
     }
 
-    public void setApprovalStatus(Date approvalStatus) {
+    public void setApprovalStatus(String approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

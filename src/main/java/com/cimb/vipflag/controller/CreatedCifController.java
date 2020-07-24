@@ -2,7 +2,7 @@ package com.cimb.vipflag.controller;
 
 import com.cimb.vipflag.dao.CreatedRepo;
 import com.cimb.vipflag.dao.UserRepo;
-import com.cimb.vipflag.entity.CreatedData;
+import com.cimb.vipflag.entity.CifData;
 import com.cimb.vipflag.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +21,12 @@ public class CreatedCifController {
     private UserRepo userRepo;
 
     @PostMapping("/create_data/{userId}")
-    public List<CreatedData> createdData (@RequestBody List<CreatedData> listData, @PathVariable int userId){
+    public List<CifData> createdData (@RequestBody List<CifData> listData, @PathVariable int userId){
         Date date = new Date();
         User findUser = userRepo.findById(userId).get();
 
         listData.forEach((data) -> {
-            findUser.getCreatedData().add(data);
+            findUser.getCifData().add(data);
             data.setCreatedDate(date);
             createdRepo.save(data);
         });
@@ -34,7 +34,7 @@ public class CreatedCifController {
     }
 
     @GetMapping("/all_data")
-    public List<CreatedData> allData (){
+    public List<CifData> allData (){
         return createdRepo.findAll();
     }
 }

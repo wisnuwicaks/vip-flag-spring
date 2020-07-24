@@ -3,7 +3,6 @@ package com.cimb.vipflag.controller;
 import com.cimb.vipflag.dao.CreatedRepo;
 import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.dao.UserRoleRepo;
-import com.cimb.vipflag.entity.CreatedData;
 import com.cimb.vipflag.entity.User;
 import com.cimb.vipflag.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,12 +35,19 @@ public class UserController {
         return findUser;
     }
 
+    @GetMapping("/username/{username}")
+    public User getUserByUsername (@PathVariable String username){
+        User findUser = userRepo.findByUsername(username);
+        System.out.println(findUser);
+        return findUser;
+    }
+
     @PostMapping("/add/role/{roleName}")
     public User addUserWithRole (@RequestBody User userData, @PathVariable String roleName){
         UserRole findRole = userRoleRepo.findUserRoleByRoleName(roleName);
         userData.setUserRole(findRole);
-        String encodedPassword = pwEncoder.encode(userData.getPassword());
-        userData.setPassword(encodedPassword);
+//        String encodedPassword = pwEncoder.encode(userData.getPassword());
+//        userData.setPassword(encodedPassword);
         return userRepo.save(userData);
     }
 
@@ -51,6 +56,14 @@ public class UserController {
         UserRole findRole = userRoleRepo.findUserRoleByRoleName(roleName);
         User findUser = userRepo.findById(userId).get();
         findUser.setUserRole(findRole);
+        return userRepo.save(findUser);
+    }
+
+    @PostMapping("/{userId}/role/{roleName}")
+    public User removeUserRole (@PathVariable int userId,@PathVariable String roleName){
+        UserRole findRole = userRoleRepo.findUserRoleByRoleName(roleName);
+        User findUser = userRepo.findById(userId).get();
+
         return userRepo.save(findUser);
     }
 

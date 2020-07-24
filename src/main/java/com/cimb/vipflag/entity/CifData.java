@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class CreatedData {
+public class CifData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cfcifn;

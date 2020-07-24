@@ -26,13 +26,11 @@ public class User {
     private UserRole userRole;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<ApprovedData> approvedData;
+
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<CreatedData> createdData;
+    private List<CifData> cifData;
 
     public int getUserId() {
         return userId;
@@ -101,19 +99,11 @@ public class User {
     }
 
 
-    public List<ApprovedData> getApprovedData() {
-        return approvedData;
+    public List<CifData> getCifData() {
+        return cifData;
     }
 
-    public void setApprovedData(List<ApprovedData> approvedData) {
-        this.approvedData = approvedData;
-    }
-
-    public List<CreatedData> getCreatedData() {
-        return createdData;
-    }
-
-    public void setCreatedData(List<CreatedData> createdData) {
-        this.createdData = createdData;
+    public void setCifData(List<CifData> cifData) {
+        this.cifData = cifData;
     }
 }
