@@ -12,7 +12,8 @@ public interface UserGroupRepo extends JpaRepository<UserGroup,Integer> {
     @Query(value = "SELECT * FROM user_group WHERE checker_id= ?1", nativeQuery = true)
     public Iterable<UserGroup> findCheckerHasApprove(int makerId);
 
-
+    @Query(value = "SELECT * FROM user_group WHERE group_name= ?1", nativeQuery = true)
+    public Iterable<UserGroup> findGroupByName(String groupName);
 
 
 

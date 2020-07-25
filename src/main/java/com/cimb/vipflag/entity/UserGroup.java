@@ -9,7 +9,11 @@ public class UserGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int makerId;
+    private String groupName;
+
+    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @JoinColumn(name = "maker_id")
+    private User maker;
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "checker_id")
@@ -23,13 +27,7 @@ public class UserGroup {
         this.id = id;
     }
 
-    public int getMakerId() {
-        return makerId;
-    }
 
-    public void setMakerId(int makerId) {
-        this.makerId = makerId;
-    }
 
     public User getChecker() {
         return checker;
@@ -37,5 +35,21 @@ public class UserGroup {
 
     public void setChecker(User checker) {
         this.checker = checker;
+    }
+
+    public User getMaker() {
+        return maker;
+    }
+
+    public void setMaker(User maker) {
+        this.maker = maker;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

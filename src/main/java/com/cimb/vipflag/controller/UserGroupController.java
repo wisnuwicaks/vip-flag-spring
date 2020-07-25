@@ -24,9 +24,21 @@ public class UserGroupController {
     public Iterable<UserGroup> getAllRelation(){
         return userGroupRepo.findAll();
     }
+
     @GetMapping("/get_maker_relation/{makerId}")
     public Iterable<UserGroup> getMakerRelation(@PathVariable int makerId){
         return userGroupRepo.findMakerRelation(makerId);
+    }
+
+
+    @GetMapping("/get_checker_relation/{checkerId}")
+    public Iterable<UserGroup> getCheckerRelation(@PathVariable int checkerId){
+        return userGroupRepo.findMakerRelation(checkerId);
+    }
+
+    @GetMapping("/group_name/{groupName}")
+    public Iterable<UserGroup> findGroupByName(@PathVariable String groupName){
+        return userGroupRepo.findGroupByName(groupName);
     }
 
 
@@ -38,10 +50,8 @@ public class UserGroupController {
         User findChecker = userRepo.findById(checkerId).get();
 
         UserGroup newRelation = new UserGroup();
-        newRelation.setMakerId(findMaker.getUserId());
+        newRelation.setMaker(findMaker);
         newRelation.setChecker(findChecker);
         return userGroupRepo.save(newRelation);
-
-
     }
 }
