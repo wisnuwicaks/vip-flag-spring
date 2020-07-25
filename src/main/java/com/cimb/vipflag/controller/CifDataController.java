@@ -5,11 +5,15 @@ import com.cimb.vipflag.dao.FileLinkDirectoryRepo;
 import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.FileLinkDirectory;
 import com.cimb.vipflag.entity.User;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.transaction.Transactional;
 import java.io.*;
@@ -36,6 +40,37 @@ public class CifDataController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @PostMapping("/testftp")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        String FTP_ADDRESS = "10.25.131.38";
+        String LOGIN = "FTPAS400";
+        String PSW = "Bintaro.1!";
+
+        FTPClient con = null;
+
+        try {
+            con = new FTPClient();
+            con.connect(FTP_ADDRESS);
+
+            if (con.login(LOGIN, PSW)) {
+                con.enterLocalPassiveMode(); // important!
+                con.setFileType(FTP.BINARY_FILE_TYPE);
+
+                boolean result = con.storeFile(file.getOriginalFilename(), file.getInputStream());
+                con.logout();
+                con.disconnect();
+                redirectAttributes.addFlashAttribute("message",
+                        "You successfully uploaded " + file.getOriginalFilename() + "!");
+                System.out.println("sdada");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Could not upload " + file.getOriginalFilename() + "!");
+        }
+
+        return "redirect:/";
+    }
 
     @PostMapping("/file/{checkerId}")
     @Transactional
