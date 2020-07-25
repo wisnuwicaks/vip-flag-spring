@@ -7,7 +7,7 @@ import java.util.Date;
 
 
 @Entity
-public class FileLinkDirectory  {
+public class FileDirectory {
     @Id
     private int fileId;
 

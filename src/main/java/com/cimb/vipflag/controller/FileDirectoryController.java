@@ -1,12 +1,10 @@
 package com.cimb.vipflag.controller;
 
 
-import com.cimb.vipflag.dao.FileLinkDirectoryRepo;
+import com.cimb.vipflag.dao.FileDirectoryRepo;
 import com.cimb.vipflag.dao.UserRepo;
-import com.cimb.vipflag.entity.FileLinkDirectory;
+import com.cimb.vipflag.entity.FileDirectory;
 import com.cimb.vipflag.entity.User;
-import com.cimb.vipflag.entity.UserRole;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -14,15 +12,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,68 +37,68 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/files")
 @CrossOrigin
-public class FileLinkDirectoryController {
+public class FileDirectoryController {
 
     private String filePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\cif_data\\";
 
     @Autowired
-    private FileLinkDirectoryRepo fileLinkDirectoryRepo;
+    private FileDirectoryRepo fileDirectoryRepo;
 
     @Autowired
     private UserRepo userRepo;
 
 
     @GetMapping("/all")
-    public Iterable<FileLinkDirectory> getAllFileUploaded (){
-        return fileLinkDirectoryRepo.findAll();
+    public Iterable<FileDirectory> getAllFileUploaded (){
+        return fileDirectoryRepo.findAll();
     }
 
 
     @GetMapping("/checker/{checkerId}")
-    public Iterable<FileLinkDirectory> getFileByChecker (@PathVariable int checkerId){
-        return fileLinkDirectoryRepo.findFileByCheckerId(checkerId);
+    public Iterable<FileDirectory> getFileByChecker (@PathVariable int checkerId){
+        return fileDirectoryRepo.findFileByCheckerId(checkerId);
     }
 
     @GetMapping("/maker/{makerId}")
-    public Iterable<FileLinkDirectory> getFileByMaker (@PathVariable int makerId){
-        return fileLinkDirectoryRepo.findFileByMakerId(makerId);
+    public Iterable<FileDirectory> getFileByMaker (@PathVariable int makerId){
+        return fileDirectoryRepo.findFileByMakerId(makerId);
     }
 
     @GetMapping("/maker/{makerId}/{status}")
-    public Iterable<FileLinkDirectory> getFileByMakerStatus (@PathVariable int makerId,@PathVariable String status){
-        return fileLinkDirectoryRepo.findFileByMakerStatus(makerId,status);
+    public Iterable<FileDirectory> getFileByMakerStatus (@PathVariable int makerId, @PathVariable String status){
+        return fileDirectoryRepo.findFileByMakerStatus(makerId,status);
     }
 
     @GetMapping("/need_approve/{checkerId}")
-    public Iterable<FileLinkDirectory> getFileToApproveByChecker (@PathVariable int checkerId){
-        return fileLinkDirectoryRepo.findFileChecker(checkerId);
+    public Iterable<FileDirectory> getFileToApproveByChecker (@PathVariable int checkerId){
+        return fileDirectoryRepo.findFileChecker(checkerId);
     }
 
     @GetMapping("/null_status/{checkerId}")
-    public Iterable<FileLinkDirectory> getFileCheckerByStatus (@PathVariable int checkerId){
-        return fileLinkDirectoryRepo.findFileCheckerNull(checkerId);
+    public Iterable<FileDirectory> getFileCheckerByStatus (@PathVariable int checkerId){
+        return fileDirectoryRepo.findFileCheckerNull(checkerId);
     }
 
     @GetMapping("/not_null_status/{checkerId}")
-    public Iterable<FileLinkDirectory> findFileCheckerNotNull (@PathVariable int checkerId){
+    public Iterable<FileDirectory> findFileCheckerNotNull (@PathVariable int checkerId){
 
-        return fileLinkDirectoryRepo.findFileCheckerNotNull(checkerId);
+        return fileDirectoryRepo.findFileCheckerNotNull(checkerId);
     }
 
     @GetMapping("/checker/{checkerId}/{status}")
-    public Iterable<FileLinkDirectory> getFileByCheckerStatus (@PathVariable int checkerId,@PathVariable String status){
-        return fileLinkDirectoryRepo.findFileByCheckerStatus(checkerId,status);
+    public Iterable<FileDirectory> getFileByCheckerStatus (@PathVariable int checkerId, @PathVariable String status){
+        return fileDirectoryRepo.findFileByCheckerStatus(checkerId,status);
     }
 
     @GetMapping("/checker/{checkerId}/{status1}/{status2}")
-    public Iterable<FileLinkDirectory> getFileByCheckerStatus2 (@PathVariable int checkerId,@PathVariable String status1,@PathVariable String status2){
-        return fileLinkDirectoryRepo.findFileByCheckerStatus2(checkerId,status1,status2);
+    public Iterable<FileDirectory> getFileByCheckerStatus2 (@PathVariable int checkerId, @PathVariable String status1, @PathVariable String status2){
+        return fileDirectoryRepo.findFileByCheckerStatus2(checkerId,status1,status2);
     }
 
 
 
     @PostMapping("/reject/{fileId}")
-    public FileLinkDirectory setRejectFile(@PathVariable int fileId){
+    public FileDirectory setRejectFile(@PathVariable int fileId){
 
         LocalDateTime localDateTime = LocalDateTime.now();
 
@@ -115,18 +108,18 @@ public class FileLinkDirectoryController {
 
 
 
-        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
+        FileDirectory findFile = fileDirectoryRepo.findById(fileId).get();
         findFile.setApprovalStatus("Rejected");
         findFile.setApprovalDate(null);
-        return fileLinkDirectoryRepo.save(findFile);
+        return fileDirectoryRepo.save(findFile);
     }
 
     @PostMapping("/uploadExcelFile/{makerId}")
-    public FileLinkDirectory uploadFile(Model model, MultipartFile file,@PathVariable int makerId) throws IOException {
+    public FileDirectory uploadFile(Model model, MultipartFile file, @PathVariable int makerId) throws IOException {
         User findMaker = userRepo.findById(makerId).get();
 
         InputStream in = file.getInputStream();
-        Optional<FileLinkDirectory> findLastFile = fileLinkDirectoryRepo.findLastFile();
+        Optional<FileDirectory> findLastFile = fileDirectoryRepo.findLastFile();
 
 //        LocalDate localDate = localDateTime.toLocalDate();
 //        LocalTime localTime = localDateTime.toLocalTime();
@@ -171,7 +164,7 @@ public class FileLinkDirectoryController {
 
         Date mydate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        FileLinkDirectory newData = new FileLinkDirectory();
+        FileDirectory newData = new FileDirectory();
         newData.setFileId(sequenceNumber);
         newData.setFileName(file.getOriginalFilename());
         newData.setCreatedBy(findMaker.getUsername());
@@ -179,7 +172,7 @@ public class FileLinkDirectoryController {
         newData.setLinkDirectory(fileDownloadUri);
         newData.setUserMaker(findMaker);
 
-        return fileLinkDirectoryRepo.save(newData);
+        return fileDirectoryRepo.save(newData);
     }
 
     @GetMapping("/download/{fileName:.+}")

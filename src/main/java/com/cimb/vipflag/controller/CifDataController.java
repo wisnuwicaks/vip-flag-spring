@@ -1,9 +1,9 @@
 package com.cimb.vipflag.controller;
 
 
-import com.cimb.vipflag.dao.FileLinkDirectoryRepo;
+import com.cimb.vipflag.dao.FileDirectoryRepo;
 import com.cimb.vipflag.dao.UserRepo;
-import com.cimb.vipflag.entity.FileLinkDirectory;
+import com.cimb.vipflag.entity.FileDirectory;
 import com.cimb.vipflag.entity.User;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -21,9 +21,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -36,7 +34,7 @@ public class CifDataController {
     private String filePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\converted_file\\";
 
     @Autowired
-    private FileLinkDirectoryRepo fileLinkDirectoryRepo;
+    private FileDirectoryRepo fileDirectoryRepo;
 
     @Autowired
     private UserRepo userRepo;
@@ -74,9 +72,9 @@ public class CifDataController {
 
     @PostMapping("/file/{checkerId}")
     @Transactional
-    public FileLinkDirectory generateTextFile (@RequestBody FileLinkDirectory approvedData,@PathVariable int checkerId) throws IOException {
+    public FileDirectory generateTextFile (@RequestBody FileDirectory approvedData, @PathVariable int checkerId) throws IOException {
 
-        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(approvedData.getFileId()).get();
+        FileDirectory findFile = fileDirectoryRepo.findById(approvedData.getFileId()).get();
         User findChecker = userRepo.findById(checkerId).get();
 
         LocalDateTime localDateTime = LocalDateTime.now();
