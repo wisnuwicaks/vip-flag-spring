@@ -78,7 +78,7 @@ public class FileLinkDirectoryController {
 
     @GetMapping("/need_approve/{checkerId}")
     public Iterable<FileLinkDirectory> getFileToApproveByChecker (@PathVariable int checkerId){
-        return fileLinkDirectoryRepo.findFileChecker();
+        return fileLinkDirectoryRepo.findFileChecker(checkerId);
     }
 
     @GetMapping("/checker/{checkerId}/{status}")
@@ -144,7 +144,7 @@ public class FileLinkDirectoryController {
         int sequenceNumber = 0;
         if(findLastFile.toString()=="Optional.empty") {
             System.out.println("kosong");
-            sequenceNumber = 2000;
+            sequenceNumber = 1529;
         }else{
             sequenceNumber = findLastFile.get().getFileId()+1;
         }
@@ -152,7 +152,7 @@ public class FileLinkDirectoryController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         System.out.println(LocalDate.now().format(formatter));
-        String newFileName = "INCIFVIP_"+LocalDate.now().format(formatter)+"_"+Integer.toString(sequenceNumber)+".xlsx";
+        String newFileName = "INCIFVIP_"+LocalDate.now().format(formatter)+"_"+(sequenceNumber)+".xlsx";
         String fileLocation = filePath.substring(0, filePath.length()) +newFileName;
         FileOutputStream f = new FileOutputStream(fileLocation);
 

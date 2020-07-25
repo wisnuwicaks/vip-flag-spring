@@ -9,7 +9,6 @@ import java.util.Date;
 @Entity
 public class FileLinkDirectory  {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int fileId;
 
     private String linkDirectory;
