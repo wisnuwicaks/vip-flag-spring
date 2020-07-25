@@ -81,6 +81,17 @@ public class FileLinkDirectoryController {
         return fileLinkDirectoryRepo.findFileChecker(checkerId);
     }
 
+    @GetMapping("/null_status/{checkerId}")
+    public Iterable<FileLinkDirectory> getFileCheckerByStatus (@PathVariable int checkerId){
+        return fileLinkDirectoryRepo.findFileCheckerNull(checkerId);
+    }
+
+    @GetMapping("/not_null_status/{checkerId}")
+    public Iterable<FileLinkDirectory> findFileCheckerNotNull (@PathVariable int checkerId){
+
+        return fileLinkDirectoryRepo.findFileCheckerNotNull(checkerId);
+    }
+
     @GetMapping("/checker/{checkerId}/{status}")
     public Iterable<FileLinkDirectory> getFileByCheckerStatus (@PathVariable int checkerId,@PathVariable String status){
         return fileLinkDirectoryRepo.findFileByCheckerStatus(checkerId,status);
@@ -92,23 +103,6 @@ public class FileLinkDirectoryController {
     }
 
 
-    @PostMapping("/approve/{fileId}/{checkerId}")
-    public FileLinkDirectory setApproveFile(@PathVariable int fileId,@PathVariable int checkerId){
-
-        User findChecker = userRepo.findById(checkerId).get();
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        LocalDate localDate = localDateTime.toLocalDate();
-        LocalTime localTime = localDateTime.toLocalTime();
-        java.sql.Date date = java.sql.Date.valueOf(localDate);
-
-
-        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(fileId).get();
-        findFile.setApprovalStatus("Approved");
-        findFile.setApprovedBy(findChecker.getUsername());
-        findFile.setApprovalDate(localDateTime);
-        return fileLinkDirectoryRepo.save(findFile);
-    }
 
     @PostMapping("/reject/{fileId}")
     public FileLinkDirectory setRejectFile(@PathVariable int fileId){

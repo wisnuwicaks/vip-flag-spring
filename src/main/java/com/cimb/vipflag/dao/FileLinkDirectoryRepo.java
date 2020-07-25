@@ -29,4 +29,14 @@ public interface FileLinkDirectoryRepo extends JpaRepository<FileLinkDirectory,I
     @Query(value ="SELECT fl.file_id,fl.created_by,fl.approved_by,fl.approval_status, fl.created_date,fl.approval_date, fl.maker_id,fl.checker_id, fl.file_name,fl.link_directory FROM file_link_directory fl inner join user_group ug on fl.maker_id=ug.maker_id where ug.checker_id=?1" , nativeQuery = true)
     public Iterable<FileLinkDirectory> findFileChecker(int checkerId);
 
+    @Query(value ="SELECT fl.file_id,fl.created_by,fl.approved_by,fl.approval_status, fl.created_date,fl.approval_date, fl.maker_id,fl.checker_id, fl.file_name,fl.link_directory FROM file_link_directory fl inner join user_group ug on fl.maker_id=ug.maker_id where ug.checker_id=?1 and approval_status=?2" , nativeQuery = true)
+    public Iterable<FileLinkDirectory> findFileCheckerByStatus(int checkerId, String status);
+
+
+    @Query(value ="SELECT fl.file_id,fl.created_by,fl.approved_by,fl.approval_status, fl.created_date,fl.approval_date, fl.maker_id,fl.checker_id, fl.file_name,fl.link_directory FROM file_link_directory fl inner join user_group ug on fl.maker_id=ug.maker_id where ug.checker_id=?1 and approval_status is null" , nativeQuery = true)
+    public Iterable<FileLinkDirectory> findFileCheckerNull(int checkerId);
+
+    @Query(value ="SELECT fl.file_id,fl.created_by,fl.approved_by,fl.approval_status, fl.created_date,fl.approval_date, fl.maker_id,fl.checker_id, fl.file_name,fl.link_directory FROM file_link_directory fl inner join user_group ug on fl.maker_id=ug.maker_id where ug.checker_id=?1 and approval_status is not null" , nativeQuery = true)
+    public Iterable<FileLinkDirectory> findFileCheckerNotNull(int checkerId);
+
 }

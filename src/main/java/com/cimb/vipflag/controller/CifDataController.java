@@ -1,12 +1,17 @@
 package com.cimb.vipflag.controller;
 
 
+import com.cimb.vipflag.dao.FileLinkDirectoryRepo;
+import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.FileLinkDirectory;
+import com.cimb.vipflag.entity.User;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
@@ -26,15 +31,33 @@ public class CifDataController {
 
     private String filePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\converted_file\\";
 
-    @PostMapping("/file")
-    public void generateTextFile (@RequestBody FileLinkDirectory approvedData) throws IOException {
-//        FileInputStream fis = new FileInputStream(approvedData.getLinkDirectory());
-        System.out.println("ini adlah file id");
-        System.out.println(approvedData.getFileId());
+    @Autowired
+    private FileLinkDirectoryRepo fileLinkDirectoryRepo;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @PostMapping("/file/{checkerId}")
+    @Transactional
+    public FileLinkDirectory generateTextFile (@RequestBody FileLinkDirectory approvedData,@PathVariable int checkerId) throws IOException {
+
+        FileLinkDirectory findFile = fileLinkDirectoryRepo.findById(approvedData.getFileId()).get();
+        User findChecker = userRepo.findById(checkerId).get();
+
         LocalDateTime localDateTime = LocalDateTime.now();
 
         String localDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String localTime = localDateTime.format(DateTimeFormatter.ofPattern("hhMMss"));
+
+        findFile.setApprovedBy(findChecker.getUsername());
+        findFile.setApprovalStatus("Approved");
+        findFile.setUserChecker(findChecker);
+        findFile.setApprovalDate(localDateTime);
+
+        //        FileInputStream fis = new FileInputStream(approvedData.getLinkDirectory());
+        System.out.println("ini adlah file id");
+        System.out.println(approvedData.getFileId());
+
 
         StringBuilder sb = new StringBuilder();
 
@@ -111,6 +134,7 @@ public class CifDataController {
         Path path = Paths.get(filePath +"INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt");
         Files.write(path, Arrays.asList(sb.toString()));
 
+        return approvedData;
 
 
     }
