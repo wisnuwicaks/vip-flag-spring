@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,35 +40,44 @@ public class CifDataController {
     @Autowired
     private UserRepo userRepo;
 
-    @PostMapping("/testftp")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-        String FTP_ADDRESS = "10.25.131.38";
-        String LOGIN = "FTPAS400";
-        String PSW = "Bintaro.1!";
 
-        FTPClient con = null;
+    private static final int BUFFER_SIZE = 4096;
+    @PostMapping("/sendftp")
+    public void handleFileUpload(@RequestBody FileDirectory fileDirectory) throws IOException {
+
+//        ftp://user:password@host:port/path
+        String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
+        String host = "10.25.131.38";
+        String user = "FTPAS400";
+        String pass = "Bintaro.1!";
+        String filePath = fileDirectory.getLinkDirectory();
+        String uploadPath = "sit1/eTP/SIBS/INCIFVIP_20200726_1529.xlsx";
+
+        ftpUrl = String.format(ftpUrl, user, pass, host, uploadPath);
+        System.out.println("Upload URL: " + ftpUrl);
+
 
         try {
-            con = new FTPClient();
-            con.connect(FTP_ADDRESS);
+            URL url = new URL(ftpUrl);
+            URLConnection conn = url.openConnection();
+            OutputStream outputStream = conn.getOutputStream();
+//            FileInputStream inputStream = new FileInputStream(filePath);
+            InputStream inputStream = new URL(fileDirectory.getLinkDirectory()).openStream();
 
-            if (con.login(LOGIN, PSW)) {
-                con.enterLocalPassiveMode(); // important!
-                con.setFileType(FTP.BINARY_FILE_TYPE);
-
-                boolean result = con.storeFile(file.getOriginalFilename(), file.getInputStream());
-                con.logout();
-                con.disconnect();
-                redirectAttributes.addFlashAttribute("message",
-                        "You successfully uploaded " + file.getOriginalFilename() + "!");
-                System.out.println("sdada");
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = -1;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
             }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message",
-                    "Could not upload " + file.getOriginalFilename() + "!");
+
+            inputStream.close();
+            outputStream.close();
+
+            System.out.println("File uploaded");
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
-        return "redirect:/";
     }
 
     @PostMapping("/file/{checkerId}")
@@ -163,12 +173,49 @@ public class CifDataController {
             sb.append("\n");
         }
         sb.append(99+"|"+ 3+"|"+0+"+"+"\n");
-
-        Path path = Paths.get(filePath +"INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt");
+        String fileNameTxt = "INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt";
+        Path path = Paths.get(filePath +fileNameTxt);
         Files.write(path, Arrays.asList(sb.toString()));
-
+        sendFtpTxt(path.toString(),fileNameTxt);
         return approvedData;
 
+
+    }
+
+    public void sendFtpTxt(String txtDirectory, String fileNameTxt) throws IOException {
+
+//        ftp://user:password@host:port/path
+        String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
+        String host = "10.25.131.38";
+        String user = "FTPAS400";
+        String pass = "Bintaro.1!";
+        String filePath = txtDirectory;
+        String uploadPath = "sit1/eTP/SIBS/"+fileNameTxt;
+
+        ftpUrl = String.format(ftpUrl, user, pass, host, uploadPath);
+        System.out.println("Upload URL: " + ftpUrl);
+
+
+        try {
+            URL url = new URL(ftpUrl);
+            URLConnection conn = url.openConnection();
+            OutputStream outputStream = conn.getOutputStream();
+            FileInputStream inputStream = new FileInputStream(filePath);
+//            InputStream inputStream = new URL(txtDirectory).openStream(); // jika dari URL pake ini
+
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = -1;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            System.out.println("File uploaded");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
