@@ -1,58 +1,62 @@
 package com.cimb.vipflag.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 public class CifDataUploaded {
     @Id
-    private int cfcifn;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-    private String cfvipi;
-    private String cfvipc;
-    private  Date createdDate;
-    private  Date approvalDate;
+    @Column(unique = true)
+    private int CFCIFN;
+
+    private String CFVIPI;
+    private String CFVIPC;
+    private LocalDateTime createdDate;
+    private  LocalDateTime approvalDate;
 
     private String approvalStatus;
-    
-    public int getCfcifn() {
-        return cfcifn;
+
+    public int getCFCIFN() {
+        return CFCIFN;
     }
 
-    public void setCfcifn(int cfcifn) {
-        this.cfcifn = cfcifn;
+    public void setCFCIFN(int CFCIFN) {
+        this.CFCIFN = CFCIFN;
     }
 
-    public String getCfvipi() {
-        return cfvipi;
+    public String getCFVIPI() {
+        return CFVIPI;
     }
 
-    public void setCfvipi(String cfvipi) {
-        this.cfvipi = cfvipi;
+    public void setCFVIPI(String CFVIPI) {
+        this.CFVIPI = CFVIPI;
     }
 
-    public String getCfvipc() {
-        return cfvipc;
+    public String getCFVIPC() {
+        return CFVIPC;
     }
 
-    public void setCfvipc(String cfvipc) {
-        this.cfvipc = cfvipc;
+    public void setCFVIPC(String CFVIPC) {
+        this.CFVIPC = CFVIPC;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getApprovalDate() {
+    public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(Date approvalDate) {
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
@@ -62,5 +66,13 @@ public class CifDataUploaded {
 
     public void setApprovalStatus(String approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

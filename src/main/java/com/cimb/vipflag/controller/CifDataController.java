@@ -1,8 +1,10 @@
 package com.cimb.vipflag.controller;
 
 
+import com.cimb.vipflag.dao.CifDataUploadedRepo;
 import com.cimb.vipflag.dao.FileDirectoryRepo;
 import com.cimb.vipflag.dao.UserRepo;
+import com.cimb.vipflag.entity.CifDataUploaded;
 import com.cimb.vipflag.entity.FileDirectory;
 import com.cimb.vipflag.entity.User;
 import org.apache.commons.net.ftp.FTP;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URL;
@@ -39,6 +42,9 @@ public class CifDataController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private CifDataUploadedRepo cifDataUploadedRepo;
 
 
     private static final int BUFFER_SIZE = 4096;
@@ -119,7 +125,7 @@ public class CifDataController {
         int lastCol = 0;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-
+//            int lastRow
 //            System.out.println("ini last col");
             lastCol = row.getLastCellNum();
 //            System.out.println(lastCol);
@@ -217,6 +223,48 @@ public class CifDataController {
             ex.printStackTrace();
         }
 
+    }
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @PostMapping("/cif_storetable")
+    public void createdData (@RequestBody List<CifDataUploaded> listData){
+        LocalDateTime localDateTime =  LocalDateTime.now();
+    cifDataUploadedRepo.saveAll(listData);
+//        listData.forEach(data->{
+//            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
+//            System.out.println(findCFCIFN);
+//
+//            if(findCFCIFN==null){
+//                System.out.println("masuk if");
+//                cifDataUploadedRepo.save(data);
+//            }
+//            else{
+//                System.out.println("masuk if");
+//                data.setId(findCFCIFN.getId());
+//                cifDataUploadedRepo.save(data);
+//            }
+//        });
+
+
+//        CifDataUploaded newData = new CifDataUploaded();
+//        newData.setCFCIFN(listData.getCFCIFN());
+//        newData.setCFCIFN(listData.getCFCIFN());
+
+
+//        cifDataUploadedRepo.save(listData);
+
+
+//        entityManager.getTransaction().begin();
+//
+//        newData.setCFCIFN(listData.getCFCIFN());
+//        newData.setCFVIPC(listData.getCFVIPC());
+//        newData.setCFVIPI(listData.getCFVIPI());
+//
+//        entityManager.persist(newData);
+//        entityManager.getTransaction().commit();
+//        return newData;
     }
 
 
