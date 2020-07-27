@@ -114,18 +114,11 @@ public class FileDirectoryController {
         return fileDirectoryRepo.save(findFile);
     }
 
-    @PostMapping("/uploadExcelFile/{makerId}")
-    public FileDirectory uploadFile(Model model, MultipartFile file, @PathVariable int makerId) throws IOException {
+    @PostMapping("/uploadExcelFile/{rowCount}/{makerId}")
+    public FileDirectory uploadFile(MultipartFile file,@PathVariable int rowCount, @PathVariable int makerId) throws IOException {
         User findMaker = userRepo.findById(makerId).get();
 
-        InputStream in = file.getInputStream();
         Optional<FileDirectory> findLastFile = fileDirectoryRepo.findLastFile();
-
-//        LocalDate localDate = localDateTime.toLocalDate();
-//        LocalTime localTime = localDateTime.toLocalTime();
-
-
-
 
         System.out.println(findLastFile);
         int sequenceNumber = 0;
@@ -140,17 +133,23 @@ public class FileDirectoryController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         System.out.println(LocalDate.now().format(formatter));
         String newFileName = "INCIFVIP_"+LocalDate.now().format(formatter)+"_"+(sequenceNumber)+".xlsx";
+
+        InputStream in = file.getInputStream();
+
+
         String fileLocation = filePath.substring(0, filePath.length()) +newFileName;
+
+
         FileOutputStream f = new FileOutputStream(fileLocation);
 
         int ch = 0;
         while ((ch = in.read()) != -1) {
             f.write(ch);
+
         }
         f.flush();
         f.close();
-        model.addAttribute("message", "File: " + newFileName
-                + " has been uploaded successfully!");
+
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/download/")
                 .path(newFileName).toUriString();
@@ -171,6 +170,7 @@ public class FileDirectoryController {
         newData.setCreatedDate(localDateTime);
         newData.setLinkDirectory(fileDownloadUri);
         newData.setUserMaker(findMaker);
+        newData.setRowCount(rowCount);
 
         return fileDirectoryRepo.save(newData);
     }

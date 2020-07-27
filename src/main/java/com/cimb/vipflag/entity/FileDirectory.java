@@ -18,6 +18,8 @@ public class FileDirectory {
     private LocalDateTime createdDate;
     private LocalDateTime approvalDate;
     private String approvalStatus;
+    private int rowCount;
+
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "maker_id")
@@ -105,5 +107,13 @@ public class FileDirectory {
 
     public void setApprovedBy(String approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
     }
 }
