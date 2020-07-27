@@ -2,7 +2,6 @@ package com.cimb.vipflag.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 public class CifDataUploaded {
@@ -11,7 +10,7 @@ public class CifDataUploaded {
     private int id;
 
     @Column(unique = true)
-    private int CFCIFN;
+    private long CFCIFN;
 
     private String CFVIPI;
     private String CFVIPC;
@@ -20,11 +19,11 @@ public class CifDataUploaded {
 
     private String approvalStatus;
 
-    public int getCFCIFN() {
+    public long getCFCIFN() {
         return CFCIFN;
     }
 
-    public void setCFCIFN(int CFCIFN) {
+    public void setCFCIFN(long CFCIFN) {
         this.CFCIFN = CFCIFN;
     }
 

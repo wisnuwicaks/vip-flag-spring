@@ -7,6 +7,9 @@ import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.CifDataUploaded;
 import com.cimb.vipflag.entity.FileDirectory;
 import com.cimb.vipflag.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.ss.usermodel.*;
@@ -46,6 +49,10 @@ public class CifDataController {
     @Autowired
     private CifDataUploadedRepo cifDataUploadedRepo;
 
+    @GetMapping("/all_approved")
+    public Iterable<CifDataUploaded> getAllData(){
+        return cifDataUploadedRepo.findAll();
+    }
 
     private static final int BUFFER_SIZE = 4096;
     @PostMapping("/sendftp")
@@ -121,11 +128,11 @@ public class CifDataController {
         Iterator<Row> rowIterator = mySheet.iterator();
         sb.append("00"+"|"+ localDate+"|"+localDate+"|"+localTime+"|"+"INCIFVIP");
         // Traversing over each row of XLSX file
-
+        int lastRow = 0;
         int lastCol = 0;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-//            int lastRow
+            lastRow += 1;
 //            System.out.println("ini last col");
             lastCol = row.getLastCellNum();
 //            System.out.println(lastCol);
@@ -152,14 +159,14 @@ public class CifDataController {
                         }
                         break;
                     case NUMERIC:
-                        System.out.print((int) cell.getNumericCellValue() + "\t");
+                        System.out.print((long) cell.getNumericCellValue() + "\t");
                         if(cell.getColumnIndex()==0){
-                            sb.append("01"+"|"+(int)cell.getNumericCellValue());
+                            sb.append("01"+"|"+(long)cell.getNumericCellValue());
                         }else if(cell.getColumnIndex()+1== lastCol){
-                            sb.append((int)cell.getNumericCellValue());
+                            sb.append((long)cell.getNumericCellValue());
 
                         }else{
-                            sb.append("|"+(int)cell.getNumericCellValue() + "|");
+                            sb.append("|"+(long)cell.getNumericCellValue() + "|");
                         }
                         break;
 //                    case BOOLEAN:
@@ -178,7 +185,7 @@ public class CifDataController {
             System.out.println("");
             sb.append("\n");
         }
-        sb.append(99+"|"+ 3+"|"+0+"+"+"\n");
+        sb.append(99+"|"+ (lastRow-1)+"|"+0+"+"+"\n");
         String fileNameTxt = "INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt";
         Path path = Paths.get(filePath +fileNameTxt);
         Files.write(path, Arrays.asList(sb.toString()));
@@ -228,43 +235,33 @@ public class CifDataController {
     @Autowired
     private EntityManager entityManager;
 
-    @PostMapping("/cif_storetable")
-    public void createdData (@RequestBody List<CifDataUploaded> listData){
+    @PostMapping("/cif_storetable/{dateString:.+}")
+    public void createdData (@PathVariable String dateString, @RequestBody List<CifDataUploaded> listData){
         LocalDateTime localDateTime =  LocalDateTime.now();
-    cifDataUploadedRepo.saveAll(listData);
-//        listData.forEach(data->{
-//            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
-//            System.out.println(findCFCIFN);
-//
-//            if(findCFCIFN==null){
-//                System.out.println("masuk if");
-//                cifDataUploadedRepo.save(data);
-//            }
-//            else{
-//                System.out.println("masuk if");
-//                data.setId(findCFCIFN.getId());
-//                cifDataUploadedRepo.save(data);
-//            }
-//        });
+
+//    cifDataUploadedRepo.saveAll(listData);
+        listData.forEach(data->{
+            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
 
 
-//        CifDataUploaded newData = new CifDataUploaded();
-//        newData.setCFCIFN(listData.getCFCIFN());
-//        newData.setCFCIFN(listData.getCFCIFN());
+            if(findCFCIFN==null){
+                System.out.println("masuk if");
+                data.setApprovalDate(localDateTime);
+                data.setCreatedDate(LocalDateTime.parse(dateString));
+                data.setApprovalStatus("Approved");
+                cifDataUploadedRepo.save(data);
+            }
+            else{
+                System.out.println("masuk if");
+                data.setId(findCFCIFN.getId());
+                data.setApprovalDate(localDateTime);
+                data.setCreatedDate(LocalDateTime.parse(dateString));
+                data.setApprovalStatus("Approved");
 
+                cifDataUploadedRepo.save(data);
+            }
+        });
 
-//        cifDataUploadedRepo.save(listData);
-
-
-//        entityManager.getTransaction().begin();
-//
-//        newData.setCFCIFN(listData.getCFCIFN());
-//        newData.setCFVIPC(listData.getCFVIPC());
-//        newData.setCFVIPI(listData.getCFVIPI());
-//
-//        entityManager.persist(newData);
-//        entityManager.getTransaction().commit();
-//        return newData;
     }
 
 
