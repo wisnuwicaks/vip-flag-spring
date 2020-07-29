@@ -55,38 +55,44 @@ public class CifDataController {
     }
 
     private static final int BUFFER_SIZE = 4096;
-    @PostMapping("/sendftp")
-    public void handleFileUpload(@RequestBody FileDirectory fileDirectory) throws IOException {
-
-//        ftp://user:password@host:port/path
-        String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
+        @PostMapping("/getftp")
+    public void getFileFtp() throws IOException {
+        String ftpUrl = "ftp://%s:%s@%s/%s";
         String host = "10.25.131.38";
         String user = "FTPAS400";
         String pass = "Bintaro.1!";
-        String filePath = fileDirectory.getLinkDirectory();
-        String uploadPath = "sit1/eTP/SIBS/INCIFVIP_20200726_1529.xlsx";
+        String dirPath = "sit1/eTP/SIBS/";
 
-        ftpUrl = String.format(ftpUrl, user, pass, host, uploadPath);
-        System.out.println("Upload URL: " + ftpUrl);
 
+        ftpUrl = String.format(ftpUrl, user, pass, host, dirPath);
+        System.out.println("URL: " + ftpUrl);
 
         try {
             URL url = new URL(ftpUrl);
             URLConnection conn = url.openConnection();
-            OutputStream outputStream = conn.getOutputStream();
-//            FileInputStream inputStream = new FileInputStream(filePath);
-            InputStream inputStream = new URL(fileDirectory.getLinkDirectory()).openStream();
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+
+            String line = null;
+            String txtLine = null;
+            System.out.println("--- START ---");
+            while ((line = reader.readLine()) != null) {
+                if(line.contains("INCIFVIP_20200728_1529.txt")){
+                    System.out.println(ftpUrl+"INCIFVIP_20200728_1529.txt");
+                    URL txtUrl = new URL(ftpUrl+"INCIFVIP_20200728_1529.txt");
+                    URLConnection txtCon = txtUrl.openConnection();
+                    InputStream txtInputStream = txtCon.getInputStream();
+                    BufferedReader txtReader = new BufferedReader(new InputStreamReader(txtInputStream));
+                    while((txtLine = txtReader.readLine()) != null){
+                        System.out.println(txtLine);
+                    }
+                }
             }
 
-            inputStream.close();
-            outputStream.close();
+            System.out.println("--- END ---");
 
-            System.out.println("File uploaded");
+            inputStream.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
