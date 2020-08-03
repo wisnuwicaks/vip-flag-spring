@@ -250,17 +250,21 @@ public class CifDataController {
             CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
 
 
+
             if(findCFCIFN==null){
                 System.out.println("masuk if");
                 data.setApprovalDate(localDateTime);
+
                 data.setCreatedDate(LocalDateTime.parse(dateString));
                 data.setApprovalStatus("Approved");
                 cifDataUploadedRepo.save(data);
             }
             else{
-                System.out.println("masuk if");
+                System.out.println("masuk else");
                 data.setId(findCFCIFN.getId());
                 data.setApprovalDate(localDateTime);
+
+
                 data.setCreatedDate(LocalDateTime.parse(dateString));
                 data.setApprovalStatus("Approved");
 

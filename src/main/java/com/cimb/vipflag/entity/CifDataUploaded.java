@@ -9,7 +9,6 @@ public class CifDataUploaded {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
     private long CFCIFN;
 
     private String CFVIPI;

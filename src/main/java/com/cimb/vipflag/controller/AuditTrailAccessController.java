@@ -20,7 +20,7 @@ public class AuditTrailAccessController {
     @Autowired
     private UserRepo userRepo;
 
-    @PostMapping("/userlog")
+    @PostMapping("/accesslog")
     public AuditTrailAccess addUserLog(@RequestBody AuditTrailAccess userLog){
         LocalDateTime localDateTime = LocalDateTime.now();
         User findUser = userRepo.findById(userLog.getUserId()).get();

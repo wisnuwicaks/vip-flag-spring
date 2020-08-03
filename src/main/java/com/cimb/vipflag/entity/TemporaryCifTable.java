@@ -10,15 +10,15 @@ public class TemporaryCifTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
     private long CFCIFN;
 
     private String CFVIPI;
     private String CFVIPC;
     private LocalDateTime createdDate;
-    private String approvalStatus;
+
     private int makerId;
     private String makerUsername;
+    private int fileId;
 
     public int getId() {
         return id;
@@ -60,13 +60,7 @@ public class TemporaryCifTable {
         this.createdDate = createdDate;
     }
 
-    public String getApprovalStatus() {
-        return approvalStatus;
-    }
 
-    public void setApprovalStatus(String approvalStatus) {
-        this.approvalStatus = approvalStatus;
-    }
 
     public int getMakerId() {
         return makerId;
@@ -82,5 +76,13 @@ public class TemporaryCifTable {
 
     public void setMakerUsername(String makerUsername) {
         this.makerUsername = makerUsername;
+    }
+
+    public int getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
     }
 }

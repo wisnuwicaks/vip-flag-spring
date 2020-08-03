@@ -97,19 +97,19 @@ public class FileDirectoryController {
 
 
 
-    @PostMapping("/reject/{fileId}")
-    public FileDirectory setRejectFile(@PathVariable int fileId){
+    @PostMapping("/reject/{fileId}/{checkerId}")
+    public FileDirectory setRejectFile(@PathVariable int fileId, @PathVariable int checkerId){
 
+        User findChecker = userRepo.findById(checkerId).get();
         LocalDateTime localDateTime = LocalDateTime.now();
 
         LocalDate localDate = localDateTime.toLocalDate();
         LocalTime localTime = localDateTime.toLocalTime();
         java.sql.Date date = java.sql.Date.valueOf(localDate);
 
-
-
         FileDirectory findFile = fileDirectoryRepo.findById(fileId).get();
         findFile.setApprovalStatus("Rejected");
+        findFile.setUserChecker(findChecker);
         findFile.setApprovalDate(null);
         return fileDirectoryRepo.save(findFile);
     }
