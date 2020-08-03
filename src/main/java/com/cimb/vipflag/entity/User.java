@@ -1,10 +1,7 @@
 package com.cimb.vipflag.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 public class User {
@@ -17,7 +14,9 @@ public class User {
     private String firstName;
     private String lastName;
 
-    private Date lastEntry;
+    private LocalDateTime lastEntry;
+    private LocalDateTime lastLogout;
+
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "role_id")
@@ -63,12 +62,20 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Date getLastEntry() {
+    public LocalDateTime getLastEntry() {
         return lastEntry;
     }
 
-    public void setLastEntry(Date lastEntry) {
+    public void setLastEntry(LocalDateTime lastEntry) {
         this.lastEntry = lastEntry;
+    }
+
+    public LocalDateTime getLastLogout() {
+        return lastLogout;
+    }
+
+    public void setLastLogout(LocalDateTime lastLogout) {
+        this.lastLogout = lastLogout;
     }
 
     public UserRole getUserRole() {
@@ -78,4 +85,5 @@ public class User {
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+
 }

@@ -19,6 +19,7 @@ public class FileDirectory {
     private LocalDateTime approvalDate;
     private String approvalStatus;
     private int rowCount;
+    private String checksumStatus;
 
 
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
@@ -115,5 +116,13 @@ public class FileDirectory {
 
     public void setRowCount(int rowCount) {
         this.rowCount = rowCount;
+    }
+
+    public String getChecksumStatus() {
+        return checksumStatus;
+    }
+
+    public void setChecksumStatus(String checksumStatus) {
+        this.checksumStatus = checksumStatus;
     }
 }

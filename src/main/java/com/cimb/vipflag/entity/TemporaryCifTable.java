@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class CifDataUploaded {
+public class TemporaryCifTable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -15,9 +16,17 @@ public class CifDataUploaded {
     private String CFVIPI;
     private String CFVIPC;
     private LocalDateTime createdDate;
-    private  LocalDateTime approvalDate;
-
     private String approvalStatus;
+    private int makerId;
+    private String makerUsername;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public long getCFCIFN() {
         return CFCIFN;
@@ -51,14 +60,6 @@ public class CifDataUploaded {
         this.createdDate = createdDate;
     }
 
-    public LocalDateTime getApprovalDate() {
-        return approvalDate;
-    }
-
-    public void setApprovalDate(LocalDateTime approvalDate) {
-        this.approvalDate = approvalDate;
-    }
-
     public String getApprovalStatus() {
         return approvalStatus;
     }
@@ -67,11 +68,19 @@ public class CifDataUploaded {
         this.approvalStatus = approvalStatus;
     }
 
-    public int getId() {
-        return id;
+    public int getMakerId() {
+        return makerId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMakerId(int makerId) {
+        this.makerId = makerId;
+    }
+
+    public String getMakerUsername() {
+        return makerUsername;
+    }
+
+    public void setMakerUsername(String makerUsername) {
+        this.makerUsername = makerUsername;
     }
 }
