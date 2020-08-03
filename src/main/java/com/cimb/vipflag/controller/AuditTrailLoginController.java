@@ -26,14 +26,22 @@ public class AuditTrailLoginController {
     @PostMapping("/loginlog/{userId}")
     public AuditTrailLogin addUserLoginLog(@PathVariable int userId){
         LocalDateTime localDateTime = LocalDateTime.now();
+        AuditTrailLogin findLog = auditTrailLoginRepo.findLogByUserId(userId);
+
         User findUser = userRepo.findById(userId).get();
+        if(findLog==null){
+            AuditTrailLogin newLog = new AuditTrailLogin();
+            newLog.setLastLogin(localDateTime);
+            newLog.setUserId(findUser.getUserId());
+            newLog.setUsername(findUser.getUsername());
 
-        AuditTrailLogin newLog = new AuditTrailLogin();
-        newLog.setLastLogin(localDateTime);
-        newLog.setUserId(findUser.getUserId());
-        newLog.setUsername(findUser.getUsername());
+            return auditTrailLoginRepo.save(newLog);
+        }
+        else{
+            findLog.setLastLogin(localDateTime);
+            return auditTrailLoginRepo.save(findLog);
+        }
 
-        return auditTrailLoginRepo.save(newLog);
     }
 
     @PostMapping("/logoutlog/{userId}")
