@@ -115,6 +115,7 @@ public class CifDataController {
         findFile.setApprovalStatus("Approved");
         findFile.setUserChecker(findChecker);
         findFile.setApprovalDate(localDateTime);
+        findFile.setChecksumStatus(approvedData.getChecksumStatus());
 
         //        FileInputStream fis = new FileInputStream(approvedData.getLinkDirectory());
         System.out.println("ini adlah file id");
