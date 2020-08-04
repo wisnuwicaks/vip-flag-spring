@@ -8,4 +8,8 @@ public interface CifDataUploadedRepo extends JpaRepository<CifDataUploaded, Inte
 
     @Query(value = "select * from cif_data_uploaded where cfcifn=?1",nativeQuery = true)
     public CifDataUploaded findCFCIFN(long cfcifn );
+
+    @Query(value = "select * from cif_data_uploaded where date(approval_date) = CURDATE()",nativeQuery = true)
+    public Iterable<CifDataUploaded> findCifTodayApproved();
+
 }

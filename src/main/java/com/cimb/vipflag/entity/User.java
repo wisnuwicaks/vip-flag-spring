@@ -13,6 +13,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private String email;
 
     private LocalDateTime lastEntry;
     private LocalDateTime lastLogout;
@@ -86,4 +87,11 @@ public class User {
         this.userRole = userRole;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

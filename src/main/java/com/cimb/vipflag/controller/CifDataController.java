@@ -54,6 +54,11 @@ public class CifDataController {
         return cifDataUploadedRepo.findAll();
     }
 
+    @GetMapping("/all_approved/today")
+    public Iterable<CifDataUploaded> getTodayApproved(){
+        return cifDataUploadedRepo.findCifTodayApproved();
+    }
+
     private static final int BUFFER_SIZE = 4096;
         @PostMapping("/getftp")
     public void getFileFtp() throws IOException {

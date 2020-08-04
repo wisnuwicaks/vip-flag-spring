@@ -4,6 +4,7 @@ package com.cimb.vipflag.controller;
 import com.cimb.vipflag.dao.AuditTrailAccessRepo;
 import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.AuditTrailAccess;
+import com.cimb.vipflag.entity.AuditTrailChanges;
 import com.cimb.vipflag.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,11 @@ public class AuditTrailAccessController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @GetMapping("/all_log")
+    public Iterable<AuditTrailAccess> allAccessLog(){
+        return auditTrailAccessRepo.findAll();
+    }
 
     @PostMapping("/accesslog")
     public AuditTrailAccess addUserLog(@RequestBody AuditTrailAccess userLog){

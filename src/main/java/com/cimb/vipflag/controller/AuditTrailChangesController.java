@@ -22,6 +22,10 @@ public class AuditTrailChangesController {
     @Autowired
     private UserRepo userRepo;
 
+    @GetMapping("/all_log")
+    public Iterable<AuditTrailChanges> allChangesLog(){
+        return auditTrailChangesRepo.findAll();
+    }
 
     @PostMapping("/maker_log/{fileIdCreated}/{makerId}")
     public AuditTrailChanges addMakerLog(@PathVariable int fileIdCreated,@PathVariable int makerId){
@@ -34,6 +38,7 @@ public class AuditTrailChangesController {
         newLog.setCreatedDate(localDateTime);
         return auditTrailChangesRepo.save(newLog);
     }
+
     @PostMapping("/checker_log/{fileIdApproved}/{checkerId}")
     public AuditTrailChanges addChecker(@PathVariable int fileIdApproved, @PathVariable int checkerId){
         LocalDateTime localDateTime = LocalDateTime.now();
