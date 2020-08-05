@@ -244,8 +244,6 @@ public class CifDataController {
 
     }
 
-    @Autowired
-    private EntityManager entityManager;
 
     @PostMapping("/cif_storetable/{dateString:.+}")
     public void createdData (@PathVariable String dateString, @RequestBody List<CifDataUploaded> listData){
@@ -253,29 +251,25 @@ public class CifDataController {
 
 //    cifDataUploadedRepo.saveAll(listData);
         listData.forEach(data->{
-            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
-
-
-
-            if(findCFCIFN==null){
+//            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
+//            if(findCFCIFN==null){
                 System.out.println("masuk if");
                 data.setApprovalDate(localDateTime);
-
                 data.setCreatedDate(LocalDateTime.parse(dateString));
                 data.setApprovalStatus("Approved");
                 cifDataUploadedRepo.save(data);
-            }
-            else{
-                System.out.println("masuk else");
-                data.setId(findCFCIFN.getId());
-                data.setApprovalDate(localDateTime);
-
-
-                data.setCreatedDate(LocalDateTime.parse(dateString));
-                data.setApprovalStatus("Approved");
-
-                cifDataUploadedRepo.save(data);
-            }
+//            }
+//            else{
+//                System.out.println("masuk else");
+//                data.setId(findCFCIFN.getId());
+//                data.setApprovalDate(localDateTime);
+//
+//
+//                data.setCreatedDate(LocalDateTime.parse(dateString));
+//                data.setApprovalStatus("Approved");
+//
+//                cifDataUploadedRepo.save(data);
+//            }
         });
 
     }
