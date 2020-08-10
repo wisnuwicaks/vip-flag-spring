@@ -14,9 +14,9 @@ public class CifDataUploaded {
     private String CFVIPI;
     private String CFVIPC;
     private LocalDateTime createdDate;
-    private  LocalDateTime approvalDate;
-
+    private LocalDateTime approvalDate;
     private String approvalStatus;
+    private String file;
 
     public long getCFCIFN() {
         return CFCIFN;
@@ -72,5 +72,13 @@ public class CifDataUploaded {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 }

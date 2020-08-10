@@ -7,20 +7,12 @@ import com.cimb.vipflag.dao.UserRepo;
 import com.cimb.vipflag.entity.CifDataUploaded;
 import com.cimb.vipflag.entity.FileDirectory;
 import com.cimb.vipflag.entity.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URL;
@@ -104,9 +96,9 @@ public class CifDataController {
 
     }
 
-    @PostMapping("/file/{checkerId}")
+    @PostMapping("/file/{checkerId}/{fileId}")
     @Transactional
-    public FileDirectory generateTextFile (@RequestBody FileDirectory approvedData, @PathVariable int checkerId) throws IOException {
+    public FileDirectory generateTextFile (@PathVariable int fileId,@RequestBody FileDirectory approvedData, @PathVariable int checkerId) throws IOException {
 
         FileDirectory findFile = fileDirectoryRepo.findById(approvedData.getFileId()).get();
         User findChecker = userRepo.findById(checkerId).get();
@@ -138,7 +130,7 @@ public class CifDataController {
 
         // Get iterator to all the rows in current sheet
         Iterator<Row> rowIterator = mySheet.iterator();
-        sb.append("00"+"|"+ localDate+"|"+localDate+"|"+localTime+"|"+"INCIFVIP");
+        sb.append("00"+"|"+ localDate+"|"+localDate+"|"+localTime+"|"+"INCIFVIP-"+fileId);
         // Traversing over each row of XLSX file
         int lastRow = 0;
         int lastCol = 0;
@@ -195,10 +187,13 @@ public class CifDataController {
                 }
             }
             System.out.println("");
+//            if(!lastRow){
+//
+//            }
             sb.append("\n");
         }
-        sb.append(99+"|"+ (lastRow-1)+"|"+0+"+"+"\n");
-        String fileNameTxt = "INCIFVIP_"+localDate+"_"+approvedData.getFileId()+".txt";
+        sb.append(99+"|"+ (lastRow-1)+"|"+0+"+");
+        String fileNameTxt = "INCIFVIP-"+localDate+"-"+approvedData.getFileId()+".txt";
         Path path = Paths.get(filePath +fileNameTxt);
         Files.write(path, Arrays.asList(sb.toString()));
         sendFtpTxt(path.toString(),fileNameTxt);
@@ -215,7 +210,7 @@ public class CifDataController {
         String user = "FTPAS400";
         String pass = "Bintaro.1!";
         String filePath = txtDirectory;
-        String uploadPath = "sit1/eTP/SIBS/"+fileNameTxt;
+        String uploadPath = "sit1/eTP/SIBS/"+"INCIFVIP.txt";
 
         ftpUrl = String.format(ftpUrl, user, pass, host, uploadPath);
         System.out.println("Upload URL: " + ftpUrl);
@@ -245,18 +240,20 @@ public class CifDataController {
     }
 
 
-    @PostMapping("/cif_storetable/{dateString:.+}")
-    public void createdData (@PathVariable String dateString, @RequestBody List<CifDataUploaded> listData){
+    @PostMapping("/cif_storetable/{fileId}/{dateString:.+}")
+    public void createdData (@PathVariable String dateString, @PathVariable String fileId, @RequestBody List<CifDataUploaded> listData, @RequestParam String url){
         LocalDateTime localDateTime =  LocalDateTime.now();
 
 //    cifDataUploadedRepo.saveAll(listData);
         listData.forEach(data->{
 //            CifDataUploaded findCFCIFN = cifDataUploadedRepo.findCFCIFN(data.getCFCIFN());
 //            if(findCFCIFN==null){
-                System.out.println("masuk if");
+                System.out.println("masuk for each");
                 data.setApprovalDate(localDateTime);
                 data.setCreatedDate(LocalDateTime.parse(dateString));
                 data.setApprovalStatus("Approved");
+                data.setFile(url);
+
                 cifDataUploadedRepo.save(data);
 //            }
 //            else{

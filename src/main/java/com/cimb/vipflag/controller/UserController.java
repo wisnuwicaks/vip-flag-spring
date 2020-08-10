@@ -48,8 +48,8 @@ public class UserController {
     public User addUserWithRole (@RequestBody User userData, @PathVariable String roleName){
         UserRole findRole = userRoleRepo.findUserRoleByRoleName(roleName);
         userData.setUserRole(findRole);
-//        String encodedPassword = pwEncoder.encode(userData.getPassword());
-//        userData.setPassword(encodedPassword);
+        String encodedPassword = pwEncoder.encode(userData.getPassword());
+        userData.setPassword(encodedPassword);
         return userRepo.save(userData);
     }
     //add user role dengan user sudah ada di db
