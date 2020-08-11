@@ -132,7 +132,7 @@ public class FileDirectoryController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         System.out.println(LocalDate.now().format(formatter));
-        String newFileName = "INCIFVIP_"+LocalDate.now().format(formatter)+"_"+(sequenceNumber)+".xlsx";
+        String newFileName = "INCIFVIP-"+LocalDate.now().format(formatter)+"-"+(sequenceNumber)+".xlsx";
 
         InputStream in = file.getInputStream();
 

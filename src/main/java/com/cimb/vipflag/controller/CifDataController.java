@@ -205,22 +205,34 @@ public class CifDataController {
     public void sendFtpTxt(String txtDirectory, String fileNameTxt) throws IOException {
 
 //        ftp://user:password@host:port/path
+
+        String ftpUrlIncif = "ftp://%s:%s@%s/%s;type=i";
+
         String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
+
+
         String host = "10.25.131.38";
         String user = "FTPAS400";
         String pass = "Bintaro.1!";
         String filePath = txtDirectory;
-        String uploadPath = "sit1/eTP/SIBS/"+"INCIFVIP.txt";
 
+        String uploadPathIncif = "sit1/eTP/SIBS/"+"INCIFVIP.txt";
+        String uploadPath = "sit1/eTP/SIBS/"+fileNameTxt;
+
+
+        ftpUrlIncif = String.format(ftpUrlIncif, user, pass, host, uploadPathIncif);
         ftpUrl = String.format(ftpUrl, user, pass, host, uploadPath);
-        System.out.println("Upload URL: " + ftpUrl);
 
+        System.out.println("Upload URL: " + ftpUrl);
+        System.out.println("Upload URL INCIFVIP: " + ftpUrlIncif);
 
         try {
             URL url = new URL(ftpUrl);
             URLConnection conn = url.openConnection();
             OutputStream outputStream = conn.getOutputStream();
             FileInputStream inputStream = new FileInputStream(filePath);
+
+
 //            InputStream inputStream = new URL(txtDirectory).openStream(); // jika dari URL pake ini
 
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -228,6 +240,31 @@ public class CifDataController {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
+
+
+            inputStream.close();
+            outputStream.close();
+
+            System.out.println("File incif uploaded");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            URL url = new URL(ftpUrlIncif);
+            URLConnection conn = url.openConnection();
+            OutputStream outputStream = conn.getOutputStream();
+            FileInputStream inputStream = new FileInputStream(filePath);
+
+
+//            InputStream inputStream = new URL(txtDirectory).openStream(); // jika dari URL pake ini
+
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = -1;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
 
             inputStream.close();
             outputStream.close();
